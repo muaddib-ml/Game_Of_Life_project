@@ -23,28 +23,17 @@ class GameOfLife:
         neighbor_matrix = self._initialize_matrix()
         for i in range(self.size):
             for j in range(self.size):
-                if i == 0:
-                    if j == 0:
-                        neighbor_matrix[i][j] = self.matrix[i+1][j] + self.matrix[i][j+1] + self.matrix[i+1][j+1]
-                    elif j == self.size-1:
-                        neighbor_matrix[i][j] = self.matrix[i+1][j] + self.matrix[i][j-1] + self.matrix[i+1][j-1]
-                    else:
-                        neighbor_matrix[i][j] = self.matrix[i+1][j] + self.matrix[i][j+1] + self.matrix[i+1][j+1] + self.matrix[i][j-1]  + self.matrix[i+1][j-1]
-                elif i == self.size-1:
-                    if j == 0:
-                        neighbor_matrix[i][j] = self.matrix[i-1][j] + self.matrix[i][j+1] + self.matrix[i-1][j+1]
-                    elif j == self.size-1:
-                        neighbor_matrix[i][j] = self.matrix[i-1][j] + self.matrix[i][j-1] + self.matrix[i-1][j-1]
-                    else:
-                        neighbor_matrix[i][j] = self.matrix[i][j+1] + self.matrix[i][j-1] + self.matrix[i-1][j-1] + self.matrix[i-1][j]  + self.matrix[i-1][j+1]
-                elif j == 0:
-                    if i > 0 and i < self.size-1:
-                        neighbor_matrix[i][j] = self.matrix[i+1][j] + self.matrix[i][j+1] + self.matrix[i+1][j+1] + self.matrix[i-1][j]  + self.matrix[i-1][j+1]
-                elif j == self.size-1:
-                    if i > 0 and i < self.size-1:
-                        neighbor_matrix[i][j] = self.matrix[i-1][j] + self.matrix[i][j-1] + self.matrix[i-1][j-1] + self.matrix[i+1][j-1] + self.matrix[i+1][j]
-                else:
-                    neighbor_matrix[i][j] = self.matrix[i-1][j] + self.matrix[i][j-1] + self.matrix[i-1][j-1] + self.matrix[i-1][j+1]  + self.matrix[i][j+1] + self.matrix[i+1][j+1] + self.matrix[i+1][j] + self.matrix[i+1][j-1]
+                count = 0
+                for di in range(-1, 2):
+                    for dj in range(-1, 2):
+                        if di == 0 and dj == 0:
+                            continue
+                        v_row = i + di
+                        v_col = j + dj
+                        if 0 <= v_row < self.size and 0 <= v_col < self.size:
+                            if self.matrix[v_row][v_col] == 1:
+                                count += 1
+                neighbor_matrix[i][j] = count
         return neighbor_matrix
         
     def update_matrix(self, score_matrix):
