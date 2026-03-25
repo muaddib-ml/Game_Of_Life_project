@@ -39,12 +39,7 @@ class GameOfLife:
         Returns:
             list[list[int]]: A 2D list of dimensions self.size x self.size.
         """
-        row = self.size
-        matrix = []
-        for _ in range(self.size):
-            col = [0] * row
-            matrix.append(col)
-        return matrix
+        return [[0] * self.size for _ in range(self.size)]
 
     def random_fill(self):
         """
