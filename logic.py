@@ -17,7 +17,7 @@ class GameOfLife:
     Attributes:
         size (int): The dimension of one side of the square grid.
         matrix (list[list[int]]): The current state of the grid.
-        score_matrix (list[list[int]]): An intermediate grid storing the 
+        neighbor_counts (list[list[int]]): An intermediate grid storing the 
             neighbor count for each cell.
     """
     def __init__(self, size):
@@ -29,7 +29,7 @@ class GameOfLife:
         """
         self.size = size
         self.matrix = self._initialize_matrix()
-        self.score_matrix = self._initialize_matrix()
+        self.neighbor_counts = self._initialize_matrix()
         self.random_fill()
 
     def _initialize_matrix(self):
@@ -60,14 +60,14 @@ class GameOfLife:
             list[list[int]]: The new state of the matrix after the step.
         """
         self._compute_scores()
-        self.update_matrix()
+        return self.update_matrix()
 
     def _compute_scores(self):
         """
         Calculates the number of living neighbors for every cell in the grid.
         
         It checks the 8 adjacent directions for each point and stores the 
-        total count in `self.score_matrix`.
+        total count in `self.neighbor_counts`.
         """
         directions = [
             (-1, -1),
@@ -83,10 +83,10 @@ class GameOfLife:
             for j in range(self.size):
                 count = 0
                 for di, dj in directions:
-                    v_row, v_col = i + di, j + dj
-                    if 0 <= v_row < self.size and 0 <= v_col < self.size:
-                        count += self.matrix[v_row][v_col]
-                self.score_matrix[i][j] = count
+                    ni, nj = i + di, j + dj
+                    if 0 <= ni < self.size and 0 <= nj < self.size:
+                        count += self.matrix[ni][nj]
+                self.neighbor_counts[i][j] = count
 
     def update_matrix(self):
         """
@@ -105,7 +105,7 @@ class GameOfLife:
         for i in range(self.size):
             for j in range(self.size):
                 alive = self.matrix[i][j] == 1
-                neighbors = self.score_matrix[i][j]
+                neighbors = self.neighbor_counts[i][j]
                 if alive and neighbors in (2, 3):
                     new_matrix[i][j] = 1
                 elif not alive and neighbors == 3:
