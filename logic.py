@@ -88,15 +88,16 @@ class GameOfLife:
         Returns:
             list[list[int]]: The updated matrix.
         """
+        new_matrix = self._initialize_matrix()
         for i in range(self.size):
             for j in range(self.size):
-                if self.matrix[i][j] == 0:
-                    if self.score_matrix[i][j] == 3:
-                        self.matrix[i][j] = 1
-                elif self.matrix[i][j] == 1:
-                    if self.score_matrix[i][j] == 2 or self.score_matrix[i][j] == 3:
-                        continue
-                    self.matrix[i][j] = 0
+                alive = self.matrix[i][j] == 1
+                neighbors = self.score_matrix[i][j]
+                if alive and neighbors in (2, 3):
+                    new_matrix[i][j] = 1
+                elif not alive and neighbors == 3:
+                    new_matrix[i][j] = 1
+        self.matrix = new_matrix
         return self.matrix
 
     def print_matrix(self):
