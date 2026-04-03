@@ -47,6 +47,19 @@ class Application(tk.Tk):
             width=self.game.size * self.cell_size
             )
         self.canv.pack()
+        self.rectangles = []
+        for i in range(self.game.size):
+            row = []
+            for j in range(self.game.size):
+                x1, y1 = j * self.cell_size, i * self.cell_size
+                x2, y2 = (j+1) * self.cell_size, (i+1) * self.cell_size
+                rect = self.canv.create_rectangle(
+                    x1, y1, x2, y2,
+                    fill="white",
+                    outline="lightgrey"
+                )
+                row.append(rect)
+            self.rectangles.append(row)
 
     def draw_matrix(self):
         """
@@ -54,15 +67,10 @@ class Application(tk.Tk):
  
         Live cells (1) are drawn in black, dead cells (0) in white.
         """
-        self.canv.delete("all")
         for i in range(self.game.size):
             for j in range(self.game.size):
-                x1, y1 = i * self.cell_size, j * self.cell_size
-                x2, y2 = (i+1) * self.cell_size, (j+1) * self.cell_size
-                if self.game.matrix[i][j] == 1:
-                    self.canv.create_rectangle(x1, y1, x2, y2, fill="black", outline="lightgrey")
-                else:
-                    self.canv.create_rectangle(x1, y1, x2, y2, fill="white", outline="lightgrey")
+                color = "black" if self.game.matrix[i][j] else "white"
+                self.canv.itemconfig(self.rectangles[i][j], fill=color) 
 
     def stop(self, _event=None):
         """
