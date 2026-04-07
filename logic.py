@@ -81,9 +81,8 @@ class GameOfLife:
             for j in range(self.size):
                 count = 0
                 for di, dj in directions:
-                    ni, nj = i + di, j + dj
-                    if 0 <= ni < self.size and 0 <= nj < self.size:
-                        count += self.matrix[ni][nj]
+                    ni, nj = (i + di) % self.size, (j + dj) % self.size
+                    count += self.matrix[ni][nj]
                 neighbor_counts[i][j] = count
         return neighbor_counts
 
