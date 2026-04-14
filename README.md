@@ -58,11 +58,13 @@ This implementation goes beyond a basic Game of Life:
 ---
 
 ## 🛠️ Project Structure
+```
 .
-├── main.py # Entry point of the program
-├── logic.py # Simulation logic (GameOfLife class)
-├── interface.py # Graphical interface (Tkinter + Matplotlib)
-├── pattern.py # Predefined patterns
+├── main.py          # Point d'entrée du programme
+├── logic.py         # Logique de simulation (classe GameOfLife)
+├── interface.py     # Interface graphique (Tkinter + Matplotlib)
+└── pattern.py       # Motifs prédéfinis (patterns)
+```
 
 ### 🔬 `logic.py`
 Handles all simulation mechanics:
