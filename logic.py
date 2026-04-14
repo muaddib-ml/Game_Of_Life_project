@@ -110,3 +110,6 @@ class GameOfLife:
                 elif not alive and neighbors == 3:
                     new_matrix[i][j] = 1
         self.matrix = new_matrix
+        
+    def reset(self):
+        self.matrix = self._initialize_matrix()
