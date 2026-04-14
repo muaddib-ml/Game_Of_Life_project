@@ -1,38 +1,103 @@
-# Python Project: Conway's Game of Life (L3 BI) 🧬
 
-This project implements the **Game of Life**, a cellular automaton devised by the mathematician **John Horton Conway** in 1970. It is a model where each state leads mechanically to the next based on pre-established rules.
+# 🧬 Conway's Game of Life – Python Project (L3 BI)
+
+This project implements the **Game of Life**, a cellular automaton devised by **John Horton Conway** in 1970.  
+It simulates the evolution of a population of cells on a 2D grid based on simple deterministic rules.
+
+---
 
 ## 📋 Project Overview
-The objective is to simulate a two-dimensional grid where each cell is defined as either "alive" (1) or "dead" (0). At each step, the evolution of a cell is determined by the state of its 8 neighbors:
 
-* **Birth**: A dead cell with exactly three live neighbors becomes alive.
-* **Survival**: A live cell with two or three live neighbors remains alive; otherwise, it dies.
+The simulation is based on a square grid where each cell can be:
+- **Alive (1)**
+- **Dead (0)**
+
+At each generation, the state of each cell depends on its 8 neighbors:
+
+- **Birth**: A dead cell with exactly 3 live neighbors becomes alive  
+- **Survival**: A live cell with 2 or 3 neighbors survives  
+- **Death**: All other cells die or remain dead  
+
+<div align="center">			
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Gospers_glider_gun.gif"/>
+</div>
+
+---
+
+## ✨ Features
+
+This implementation goes beyond a basic Game of Life:
+
+### 🖥️ Interactive Graphical Interface
+- Built with **Tkinter**
+- Real-time rendering of the grid
+- Click & drag to draw cells or patterns
+
+### 🎮 Simulation Controls
+- ▶️ Play / Stop simulation  
+- ⏭️ Step-by-step execution  
+- 🔄 Reset grid  
+- 🎲 Random initialization  
+
+### ⚙️ Parameters
+- Adjustable simulation speed (**FPS slider**)  
+- Grid display toggle  
+- Edge behavior:
+  - **Wrap ON** → toroidal grid  
+  - **Wrap OFF** → fixed boundaries  
+
+### 🧩 Pattern System
+- Predefined patterns (via `PATTERNS`)
+- Selectable from a dropdown menu
+- Click to place directly on the grid
+
+### 📈 Population Graph
+- Real-time population tracking using **Matplotlib**
+- Displays evolution of living cells over generations
+
+---
 
 ## 🛠️ Project Structure
-The project is organized into several modules to ensure a clear separation between logic and display:
+.
+├── main.py # Entry point of the program
+├── logic.py # Simulation logic (GameOfLife class)
+├── interface.py # Graphical interface (Tkinter + Matplotlib)
+├── pattern.py # Predefined patterns
 
-1.  **`logic.py`**: Contains the `GameOfLife` class.
-    * Initializes an N x N matrix.
-    * Randomly populates the grid with 0s and 1s.
-    * Calculates the number of live neighbors for each cell.
-    * Computes the survival/state of each cell for the next generation.
-2.  **`interface.py`**: Manages the graphical display using the **Tkinter** library.
-    * Real-time rendering of cells (Black for alive, White for dead).
-    * Handles the simulation loop using the `.after()` method.
-3.  **`main.py`**: The entry point of the program.
-    * Initializes the game logic and launches the graphical interface.
+### 🔬 `logic.py`
+Handles all simulation mechanics:
+- Grid initialization
+- Random population
+- Neighbor computation:
+  - With boundaries
+  - With wrapping (toroidal topology)
+- State updates (Conway rules)
+- Pattern placement
+
+### 🎨 `interface.py`
+Manages the graphical interface:
+- Canvas rendering (optimized with pre-created rectangles)
+- User interactions (mouse input)
+- Simulation loop using `.after()`
+- Control panel (buttons, sliders, toggles)
+- Live population graph
+
+### 🚀 `main.py`
+- Initializes the simulation
+- Launches the interface
+
+---
 
 ## 🚀 Installation and Usage
 
-### Prerequisites
-* Python 3.x
-* `tkinter` library (usually included in standard Python installations).
-* `random` module (standard library, used for grid initialization).
+### ✅ Prerequisites
+- Python 3.x  
+- Standard libraries:
+  - `tkinter`
+  - `random`
+- External library:
+  - `matplotlib`
 
-### Running the Simulation
-To start the simulation (default size: 50x50), run the following command in your terminal:
-
+Install matplotlib if needed:
 ```bash
-python main.py
-```
-Press **Escape (Esc)** to close the window and terminate the program.
+pip install matplotlib
