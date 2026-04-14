@@ -9,7 +9,7 @@ import interface
 
 
 if __name__ == "__main__":
-    SIZE = 50
+    SIZE = 100
     game_of_life = logic.GameOfLife(SIZE)
     app = interface.Application(game_of_life)
     app.title("Game of Life")
