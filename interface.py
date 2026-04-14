@@ -38,6 +38,7 @@ class Application(tk.Tk):
         self.game = game
         self.cell_size = cell_size
         self.running = False
+        self.attributes('-fullscreen', True)
         self.generation = 0
         self.history_x = []
         self.history_y = []
@@ -74,6 +75,12 @@ class Application(tk.Tk):
         """
         Creates and packs the speed slider and control buttons (Play, Stop, Reset).
         """
+        self.exit = tk.Button(
+            self, text="Exit", command=self.stop,
+            bg="Red", activebackground="Darkred"
+            )
+        self.exit.place(relx=1.0, rely=0.0, anchor="ne")
+        
         self.slider = tk.Scale(
             self.right_frame, from_=1, to=60,
             label="Vitesse (FPS)", orient="horizontal",
