@@ -42,6 +42,8 @@ class Application(tk.Tk):
         self.generation = 0
         self.history_x = []
         self.history_y = []
+        self.grid_var = tk.BooleanVar(value=False)
+        self.border_var = tk.BooleanVar(value=True)
         self._create_widgets()
         self.update_stats()
         self.draw_matrix()
@@ -75,11 +77,11 @@ class Application(tk.Tk):
         """
         Creates and packs the speed slider and control buttons (Play, Stop, Reset).
         """
-        self.exit = tk.Button(
+        self.button_exit = tk.Button(
             self, text="Exit", command=self.stop,
             bg="Red", activebackground="Darkred"
             )
-        self.exit.place(relx=1.0, rely=0.0, anchor="ne")
+        self.button_exit.place(relx=1.0, rely=0.0, anchor="ne")
         
         self.slider = tk.Scale(
             self.right_frame, from_=1, to=60,
@@ -102,7 +104,26 @@ class Application(tk.Tk):
             self.right_frame, text="Reset", command=self.reset
         )
         self.button_reset.pack(fill="x")
-
+        
+        self.button_randomize = tk.Button(
+            self.right_frame, text="Randomize", command=self._randomize_and_draw
+            )
+        self.button_randomize.pack(fill="x")
+        
+        self.checkbutton_grid = tk.Checkbutton(
+            self.right_frame,  text="Grid", 
+            variable=self.grid_var, 
+            command=self.toggle_grid_display
+            )
+        self.checkbutton_grid.pack()
+        
+        self.checkbutton_border = tk.Checkbutton(
+            self.right_frame, text="Border (wrap)",
+            variable=self.border_var,
+            command=self._on_border_toggle,
+            )
+        self.checkbutton_border.pack()
+        
     def _create_graph(self):
         """
         Creates and embeds the Matplotlib population-over-time graph.
@@ -111,7 +132,6 @@ class Application(tk.Tk):
         self.ax = self.fig.add_subplot(111)
         self.ax.set_title("Population au cours du temps")
         self.line, = self.ax.plot([], [], color="blue", marker="o", markersize=2)
-
         self.canvas_plt = FigureCanvasTkAgg(self.fig, master=self.right_frame)
         self.canvas_plt.get_tk_widget().pack(side="top", fill="both", expand=True)
 
@@ -123,13 +143,14 @@ class Application(tk.Tk):
         which significantly improves rendering performance.
         """
         self.rectangles = []
+        initial_outline = "lightgrey" if self.grid_var.get() else ""
         for i in range(self.game.size):
             row = []
             for j in range(self.game.size):
                 x1, y1 = j * self.cell_size, i * self.cell_size
                 x2, y2 = (j + 1) * self.cell_size, (i + 1) * self.cell_size
                 rect = self.canv.create_rectangle(
-                    x1, y1, x2, y2, fill="white", outline="lightgrey"
+                    x1, y1, x2, y2, fill="white", outline=initial_outline
                 )
                 row.append(rect)
             self.rectangles.append(row)
@@ -161,6 +182,9 @@ class Application(tk.Tk):
         self.history_x = []
         self.history_y = []
         self.game.reset()
+        self.line.set_data([], [])
+        self.ax.relim()
+        self.ax.autoscale_view()
         self.draw_matrix()
         self._refresh_graph()
 
@@ -172,7 +196,7 @@ class Application(tk.Tk):
         graph, then schedules itself to run again after the slider delay.
         """
         if self.running:
-            self.game.step()
+            self.game.step(self.border_var.get())
             self.draw_matrix()
             self.update_stats()
             self.after(round(1000/self.slider.get()), self.next_step)
@@ -219,11 +243,34 @@ class Application(tk.Tk):
         self._refresh_graph()
 
     def _refresh_graph(self):
-        """
-        Updates the Matplotlib line data and forces a canvas redraw.
-        """
+        if not self.history_x: 
+            return
         self.line.set_data(self.history_x, self.history_y)
         self.ax.relim()
-        self.ax.autoscale_view(True, True, True)
-        self.canvas_plt.draw()
-        self.canvas_plt.flush_events()
+        self.ax.autoscale_view()
+        self.canvas_plt.draw_idle()
+
+    def _randomize_and_draw(self):
+        self.reset()
+        self.game.random_fill()
+        self.draw_matrix()
+        self.update_stats()
+        
+    def toggle_grid_display(self):
+        """ Modifie l'apparence de la grille en fonction des Checkbuttons """
+        grid_color = "lightgrey" if self.grid_var.get() else ""
+        
+        for row in self.rectangles:
+            for rect in row:
+                self.canv.itemconfig(rect, outline=grid_color)
+
+    def _on_border_toggle(self):
+        """
+        Appelé quand l'utilisateur coche/décoche 'Border (wrap)'.
+        Si la simulation est en pause, avance d'un step pour rendre
+        l'effet du changement immédiatement visible.
+        """
+        if not self.running:
+            self.game.step(self.border_var.get())
+            self.draw_matrix()
+            self.update_stats()

@@ -47,17 +47,17 @@ class GameOfLife:
             for j in range(self.size):
                 self.matrix[i][j] = random.randint(0, 1)
 
-    def step(self):
+    def step(self, wrap):
         """
         Executes one full iteration of the Game of Life.
  
         This method triggers the neighbor counting process and then
         updates the grid state based on the calculated scores.
         """
-        neighbor_counts = self._compute_scores()
+        neighbor_counts = self._compute_scores_wrap() if wrap else self._compute_scores_boundary()
         self._update_matrix(neighbor_counts)
 
-    def _compute_scores(self):
+    def _compute_scores_boundary(self):
         """
         Calculates the number of living neighbors for every cell in the grid.
 
@@ -81,11 +81,33 @@ class GameOfLife:
             for j in range(self.size):
                 count = 0
                 for di, dj in directions:
+                    ni, nj = i + di, j + dj
+                    if 0 <= ni < self.size and 0 <= nj < self.size:
+                        count += self.matrix[ni][nj]
+                neighbor_counts[i][j] = count
+        return neighbor_counts
+    
+    def _compute_scores_wrap(self):
+        directions = [
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),
+            (0, -1),
+            (0, 1),
+            (1, -1),
+            (1, 0),
+            (1, 1),
+        ]
+        neighbor_counts = self._initialize_matrix()
+        for i in range(self.size):
+            for j in range(self.size):
+                count = 0
+                for di, dj in directions:
                     ni, nj = (i + di) % self.size, (j + dj) % self.size
                     count += self.matrix[ni][nj]
                 neighbor_counts[i][j] = count
         return neighbor_counts
-
+    
     def _update_matrix(self, neighbor_counts):
         """
         Applies the Game of Life rules to update the grid state.
